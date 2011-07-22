@@ -1,0 +1,5 @@
+check process Autossh_<%= @name %>
+  with pidfile <%= @pidfile %>
+  start program = "<%= @start_cmd %>"
+  stop program = "<%= @stop_cmd %>"
+

@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# init script for autossh
+# sample usage:
+# ./autossh start 0 tunnel fqdn.hostname.com -L3307:localhost:3306 keyfile
+
+# ==================
+# = Configurations =
+# ==================
+
+# Print commands and their arguments as they are executed.
+# use only for development
+# set -x
+set -e
+
+# =============
+# = Variables =
+# =============
+
+CMD=$1
+NUMBER=$2
+USER=$3
+HOST=$4
+FORWARDING=$5
+KEYFILE=$6
+PORT=$7
+AUTOSSH=/usr/bin/autossh
+
+# ===========
+# = Exports =
+# ===========
+
+export AUTOSSH_PIDFILE="/var/run/autossh-$NUMBER.pid"
+
+# ============
+# = Programm =
+# ============
+
+function start_autossh {
+  $AUTOSSH -f -i $KEYFILE -N $FORWARDING -p $PORT $USER@$HOST
+}
+
+function stop_autossh {
+  kill `cat $AUTOSSH_PIDFILE`
+}
+
+case $CMD in
+  start)
+    start_autossh
+    exit 0
+  ;;
+  stop)
+    stop_autossh
+    exit 0
+  ;;
+  *)
+    p1="Usage: ./autossh start 0 tunnel fqdn.hostname.com"
+    p2="-L3307:localhost:3306 keyfile port"
+    echo $p1$p2
+    exit 1
+  ;;
+esac
